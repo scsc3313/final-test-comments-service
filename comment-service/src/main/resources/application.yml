@@ -10,3 +10,6 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
   resources:
     static-locations: /WEB-INF/views/spring/resources
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
