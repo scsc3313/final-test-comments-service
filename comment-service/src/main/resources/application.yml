@@ -1,0 +1,12 @@
+spring:
+  thymeleaf:
+    cache: false
+    prefix: /WEB-INF/views/
+    suffix: .jsp
+  datasource:
+    url: jdbc:mysql://localhost/jejunu?characterEncoding=utf-8
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.jdbc.Driver
+  resources:
+    static-locations: /WEB-INF/views/spring/resources
