@@ -19,17 +19,17 @@ import java.util.GregorianCalendar;
 @EnableJpaAuditing(dateTimeProviderRef = "dateTimeProvider")
 public class Application extends WebMvcConfigurerAdapter {
 
-    @Override
-    public void configureViewResolvers(ViewResolverRegistry registry) {
-        registry.enableContentNegotiation(new MappingJackson2JsonView());
-    }
+//    @Override
+//    public void configureViewResolvers(ViewResolverRegistry registry) {
+//        registry.enableContentNegotiation(new MappingJackson2JsonView());
+//    }
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 
     @Bean
-    public DateTimeProvider dateTimeProvider() {
+    public DateTimeProvider dateTimeProvider() { //@CreateDate를 사용하기 위해 사용하는?
         return new DateTimeProvider() {
             @Override
             public Calendar getNow() {
@@ -37,4 +37,5 @@ public class Application extends WebMvcConfigurerAdapter {
             }
         };
     }
+
 }

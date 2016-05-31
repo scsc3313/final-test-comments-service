@@ -2,7 +2,7 @@ spring:
   thymeleaf:
     cache: false
     prefix: /WEB-INF/views/
-    suffix: .jsp
+    suffix: .html
   datasource:
     url: jdbc:mysql://localhost/jejunu?characterEncoding=utf-8
     username: root

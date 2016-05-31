@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
  * Created by HSH on 16. 5. 28..
  */
 @RestController
-public class SpringBootController {
+public class JsonRestController {
 
     @Autowired
     private CommentRepository commentRepository;
@@ -24,8 +24,8 @@ public class SpringBootController {
         return new ResponseEntity<>(commments, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/comment/{id}", method = {RequestMethod.POST, RequestMethod.PUT})
-    public ResponseEntity<?> save(@PathVariable("id") Integer id, @RequestBody Comment comment) {
+    @RequestMapping(value = "/comment/", method = {RequestMethod.POST, RequestMethod.PUT})
+    public ResponseEntity<?> save(@RequestBody Comment comment) {
         Comment result = commentRepository.save(comment);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

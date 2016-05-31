@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="import" href="header.html">
+    <title>댓글 시스템</title>
+</head>
+<body>
+<div class="container">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div id="navbar">
+                <ul class="nav navbar-nav">
+                    <li><a href="#">회원가입</a></li>
+                    <li><a href="#">글쓰기</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+    </nav>
+
+    <h2 class="sub-header">글 목록</h2>
+    <h1 th:text="${name}">name</h1>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Content</th>
+                <th class="center" colspan="2">Eval</th>
+                <th>Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><img src="#" alt="user_profile_image"/></td>
+                <td>username</td>
+                <td>content</td>
+                <td>
+                    <button type="button" name="button">추천</button>
+                </td>
+                <td>
+                    <button type="button" name="button">반대</button>
+                </td>
+                <td>date</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
