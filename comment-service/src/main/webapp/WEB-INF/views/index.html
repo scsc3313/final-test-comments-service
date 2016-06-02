@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="import" href="header.html">
+    <link rel="import" href="resources/header.html"/>
     <title>댓글 시스템</title>
 </head>
 <body>
@@ -10,8 +10,9 @@
         <div class="container-fluid">
             <div id="navbar">
                 <ul class="nav navbar-nav">
-                    <li><a href="#">회원가입</a></li>
-                    <li><a href="#">글쓰기</a></li>
+                    <li><span th:text="${session.name}"/>(<span th:text="${session.des}"/>)</li>
+                    <li><a th:href="@{/signup}">회원가입</a></li>
+                    <li><a th:href="@{/write}">글쓰기 or 프로필수정</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->
@@ -35,10 +36,10 @@
                 <td><img src="#" alt="user_profile_image"/></td>
                 <td>username</td>
                 <td>content</td>
-                <td>
+                <td class="center">
                     <button type="button" name="button">추천</button>
                 </td>
-                <td>
+                <td class="center">
                     <button type="button" name="button">반대</button>
                 </td>
                 <td>date</td>

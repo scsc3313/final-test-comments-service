@@ -19,9 +19,26 @@ public class Comment {
     @ManyToOne
     private User user;
     private String content;
-
+    private Integer likeCount;
+    private Integer dislikeCount;
     @CreatedDate
     private Date date;
+
+    public Integer getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(Integer likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public Integer getDislikeCount() {
+        return dislikeCount;
+    }
+
+    public void setDislikeCount(Integer dislikeCount) {
+        this.dislikeCount = dislikeCount;
+    }
 
     public Integer getId() {
         return id;

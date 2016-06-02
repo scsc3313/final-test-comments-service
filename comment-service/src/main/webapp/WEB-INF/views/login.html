@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="import" href="header.html">
+    <link rel="import" href="resources/header.html"/>
     <title>Log in</title>
 </head>
 <body>
 <div class="container">
 
-    <form class="form-signin">
+    <form class="form-signin" th:object="${user}" th:action="@{/login}" method="post">
         <h2 class="form-signin-heading">Please sign in</h2>
-        <label for="inputEmail" class="sr-only">Id</label>
-        <input type="email" id="inputEmail" class="form-control" placeholder="Id" required autofocus>
-        <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+        <label for="id" class="sr-only">Id</label>
+        <input type="text" id="id" th:name="userId" class="form-control" placeholder="Id" required="autofocus"/>
+        <label for="password" class="sr-only">Password</label>
+        <input type="password" id="password" th:name="password" class="form-control" placeholder="Password"/>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">취소</button>
+        <button class="btn btn-lg btn-primary btn-block" type="button">취소</button>
     </form>
 
 </div> <!-- /container -->

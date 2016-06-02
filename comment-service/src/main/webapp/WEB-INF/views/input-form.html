@@ -1,7 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="import" href="header.html">
+    <link rel="import" href="resources/header.html"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"/>
+    <link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet' type='text/css'/>
+    <link href='https://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'/>
+
     <title>Sign Up</title>
 </head>
 <body>
@@ -10,76 +14,72 @@
         <div class="panel-heading">
             <div class="panel-title text-center">
                 <h1 class="title">Sign Up</h1>
+                <hr/>
             </div>
         </div>
         <div class="main-login main-center">
-            <form class="form-horizontal" method="post" action="#">
-
+            <form class="form-horizontal" method="post" th:action="@{/signup}" th:object="${user}">
                 <div class="form-group">
-                    <label for="name" class="cols-sm-2 control-label">Id</label>
                     <div class="cols-sm-10">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
-                            <input type="text" class="form-control" name="name" id="name" placeholder="Enter your Id"/>
+                            <input th:name="userId" type="text" class="form-control"
+                                   placeholder="Enter your ID"/>
                         </div>
                     </div>
                 </div>
 
+
                 <div class="form-group">
-                    <label for="password" class="cols-sm-2 control-label">Password</label>
                     <div class="cols-sm-10">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
-                            <input type="password" class="form-control" name="password" id="password"
+                            <input type="password" class="form-control" th:name="password"
                                    placeholder="Enter your Password"/>
                         </div>
                     </div>
                 </div>
 
-
                 <div class="form-group">
-                    <label for="username" class="cols-sm-2 control-label">Username</label>
                     <div class="cols-sm-10">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-users fa" aria-hidden="true"></i></span>
-                            <input type="text" class="form-control" name="username" id="username"
-                                   placeholder="Enter your Username"/>
+                            <input type="text" class="form-control" th:name="name"
+                                   placeholder="Enter your Name"/>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="email" class="cols-sm-2 control-label">Your Description</label>
                     <div class="cols-sm-10">
                         <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-comments fa" aria-hidden="true"></i></span>
-                            <input type="text" class="form-control" name="email" id="email"
+                            <span class="input-group-addon"><i class="fa fa-file-text-o fa"
+                                                               aria-hidden="true"></i></span>
+                            <input type="text" class="form-control" th:name="description"
                                    placeholder="Enter your Description"/>
                         </div>
                     </div>
                 </div>
 
+
                 <div class="form-group">
-                    <label for="confirm" class="cols-sm-2 control-label">Profile Image</label>
                     <div class="cols-sm-10">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-image fa-lg" aria-hidden="true"></i></span>
-                            <input type="file" class="form-control" name="confirm" id="confirm"/>
+                            <input type="file" class="form-control" th:name="userProfileImage"/>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group ">
-                    <button type="button" class="btn btn-primary btn-lg btn-block login-button">Register</button>
+                    <button type="submit" class="btn btn-primary btn-lg btn-block login-button">Register</button>
                 </div>
                 <div class="login-register">
-                    <a href="index.php">Cancle</a>
+                    <button onclick="window.history.back()">Cancle</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-<script type="text/javascript" src="assets/js/bootstrap.js"></script>
 </body>
 </html>
