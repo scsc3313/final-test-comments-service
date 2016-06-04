@@ -24,6 +24,11 @@ public class Comment {
     @CreatedDate
     private Date date;
 
+    public Comment(){
+        likeCount = 0;
+        dislikeCount = 0;
+    }
+
     public Integer getLikeCount() {
         return likeCount;
     }
