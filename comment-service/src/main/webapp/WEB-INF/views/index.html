@@ -9,11 +9,15 @@
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div id="navbar">
-                <ul class="nav navbar-nav">
+                <ul th:if="${session.id}" class="nav navbar-nav">
                     <li><span th:text="${session.name}"/>(<span th:text="${session.des}"/>)</li>
-                    <li><a th:href="@{/signup}">회원가입</a></li>
-                    <li><a th:href="@{/write}">글쓰기 or 프로필수정</a></li>
+                    <li><a th:href="@{/write}">글쓰기</a></li>
+                    <li><a th:href="@{/update}">프로필수정</a></li>
                     <li><a th:href="@{/logout}">로그아웃</a></li>
+                </ul>
+                <ul th:unless="${session.id}"  class="nav navbar-nav">
+                    <li><a th:href="@{/write}">글쓰기</a></li>
+                    <li><a th:href="@{/signup}">회원가입</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->
@@ -33,21 +37,23 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td><img src="#" alt="user_profile_image"/></td>
-                <td>username</td>
-                <td>content</td>
+            <tr th:each="comment : ${comments}">
+                <td><img th:src="${comment.user.userProfileImage}" alt="user_profile_image"/></td>
+                <td th:text="${comment.user.name}">username</td>
+                <td th:text="${comment.content}">content</td>
                 <td class="center">
-                    <button type="button" name="button">추천</button>
+                    <button type="button" name="button">추천(<span th:text="${comment.likeCount}"></span>)</button>
                 </td>
                 <td class="center">
-                    <button type="button" name="button">반대</button>
+                    <button type="button" name="button">반대(<span th:text="${comment.dislikeCount}"></span>)</button>
                 </td>
-                <td>date</td>
+                <td th:text="${comment.date}">date</td>
             </tr>
             </tbody>
         </table>
     </div>
 </div>
+<!--<div id="ajax"></div>-->
+<!--<script type='text/javascript' src="resources/js/ajax.js"></script>-->
 </body>
 </html>
