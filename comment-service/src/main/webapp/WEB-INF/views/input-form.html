@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="import" href="resources/header.html"/>
+    <link rel="import" href="http://localhost:8080/resources/header.html"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"/>
     <link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet' type='text/css'/>
     <link href='https://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'/>
@@ -13,8 +13,8 @@
     <div class="row main">
         <div class="panel-heading">
             <div class="panel-title text-center">
-                <h1 class="title">Sign Up</h1>
-                <hr/>
+                <h1 th:if="${session.id}" class="title">Update</h1>
+                <h1 th:unless="${session.id}" class="title">Sign Up</h1>
             </div>
         </div>
         <div class="main-login main-center">
@@ -23,7 +23,7 @@
                     <div class="cols-sm-10">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
-                            <input th:name="userId" type="text" class="form-control"
+                            <input th:field="*{userId}" type="text" class="form-control"
                                    placeholder="Enter your ID"/>
                         </div>
                     </div>
@@ -44,7 +44,7 @@
                     <div class="cols-sm-10">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-users fa" aria-hidden="true"></i></span>
-                            <input type="text" class="form-control" th:name="name"
+                            <input type="text" class="form-control" th:field="*{name}"
                                    placeholder="Enter your Name"/>
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-file-text-o fa"
                                                                aria-hidden="true"></i></span>
-                            <input type="text" class="form-control" th:name="description"
+                            <input type="text" class="form-control" th:field="*{description}"
                                    placeholder="Enter your Description"/>
                         </div>
                     </div>
@@ -66,13 +66,16 @@
                     <div class="cols-sm-10">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-image fa-lg" aria-hidden="true"></i></span>
-                            <input type="file" class="form-control" th:name="userProfileImage"/>
+                            <input type="file" class="form-control" th:field="*{userProfileImage}"/>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group ">
-                    <button type="submit" class="btn btn-primary btn-lg btn-block login-button">Register</button>
+                    <button type="submit" class="btn btn-primary btn-lg btn-block login-button">
+                        <span th:if="${session.id}">수정</span>
+                        <span th:unless="${session.id}">등록</span>
+                    </button>
                 </div>
                 <div class="login-register">
                     <button onclick="window.history.back()">Cancle</button>

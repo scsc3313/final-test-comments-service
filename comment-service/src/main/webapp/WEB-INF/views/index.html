@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="import" href="resources/header.html"/>
+    <link rel="import" href="http://localhost:8080/resources/header.html"/>
     <title>댓글 시스템</title>
 </head>
 <body>
@@ -12,10 +12,10 @@
                 <ul th:if="${session.id}" class="nav navbar-nav">
                     <li><span th:text="${session.name}"/>(<span th:text="${session.des}"/>)</li>
                     <li><a th:href="@{/write}">글쓰기</a></li>
-                    <li><a th:href="@{/update}">프로필수정</a></li>
+                    <li><a th:href="${'/update/' + session.id}">프로필수정</a></li>
                     <li><a th:href="@{/logout}">로그아웃</a></li>
                 </ul>
-                <ul th:unless="${session.id}"  class="nav navbar-nav">
+                <ul th:unless="${session.id}" class="nav navbar-nav">
                     <li><a th:href="@{/write}">글쓰기</a></li>
                     <li><a th:href="@{/signup}">회원가입</a></li>
                 </ul>
@@ -32,7 +32,7 @@
                 <th>Image</th>
                 <th>Name</th>
                 <th>Content</th>
-                <th class="center" colspan="2">Eval</th>
+                <th class="center" colspan="3">Eval</th>
                 <th>Date</th>
             </tr>
             </thead>
@@ -42,10 +42,23 @@
                 <td th:text="${comment.user.name}">username</td>
                 <td th:text="${comment.content}">content</td>
                 <td class="center">
-                    <button type="button" name="button">추천(<span th:text="${comment.likeCount}"></span>)</button>
+                    <button type="button" name="button">
+                        <a th:href="${'/like/' + comment.id}">
+                            추천(<span th:text="${comment.likeCount}"></span>)
+                        </a>
+                    </button>
                 </td>
                 <td class="center">
-                    <button type="button" name="button">반대(<span th:text="${comment.dislikeCount}"></span>)</button>
+                    <button type="button" name="button">
+                        <a th:href="${'/dislike/' + comment.id}">
+                            반대(<span th:text="${comment.dislikeCount}"></span>)
+                        </a>
+                    </button>
+                </td>
+                <td>
+                    <button th:if="${session.id == comment.user.userId}" class="center" type="button" name="button">
+                        <a th:href="${'/delete/'+comment.id}">삭제</a>
+                    </button>
                 </td>
                 <td th:text="${comment.date}">date</td>
             </tr>
