@@ -8,8 +8,9 @@ spring:
     username: root
     password: 1234
     driver-class-name: com.mysql.jdbc.Driver
+    data: classpath:/resources/import.sql
   resources:
     static-locations: /WEB-INF/views/spring/resources
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate

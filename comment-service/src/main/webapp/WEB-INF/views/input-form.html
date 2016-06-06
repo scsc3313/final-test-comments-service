@@ -15,6 +15,7 @@
             <div class="panel-title text-center">
                 <h1 th:if="${session.id}" class="title">Update</h1>
                 <h1 th:unless="${session.id}" class="title">Sign Up</h1>
+                <div th:if="${error}" th:text="${error}"></div>
             </div>
         </div>
         <div class="main-login main-center">

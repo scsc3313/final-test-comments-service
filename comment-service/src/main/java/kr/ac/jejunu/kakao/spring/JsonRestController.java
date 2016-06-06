@@ -2,6 +2,7 @@ package kr.ac.jejunu.kakao.spring;
 
 import kr.ac.jejunu.kakao.model.Comment;
 import kr.ac.jejunu.kakao.repository.CommentRepository;
+import kr.ac.jejunu.kakao.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +18,9 @@ public class JsonRestController {
 
     @Autowired
     private CommentRepository commentRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @RequestMapping(value = "/comments", method = RequestMethod.GET)
     public ResponseEntity<?> list(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "15") Integer size) {
