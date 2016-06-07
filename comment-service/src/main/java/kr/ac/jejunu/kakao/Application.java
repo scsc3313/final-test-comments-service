@@ -40,6 +40,6 @@ public class Application extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new SessionHandlerInterceptorAdapter()).addPathPatterns("/write").excludePathPatterns("/login", "/signup", "/");
+        registry.addInterceptor(new SessionHandlerInterceptorAdapter()).addPathPatterns("/write", "/like/*", "/dislike/*").excludePathPatterns("/login", "/signup", "/");
     }
 }

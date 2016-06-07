@@ -5,6 +5,10 @@
     <title>댓글 시스템</title>
 </head>
 <body>
+<script type="text/javascript" th:if="${duplicate}">
+    alert("이미 평가하셨습니다.");
+    location.href = 'http://localhost:8080/';
+</script>
 <div class="container">
     <nav class="navbar navbar-default">
         <div class="container-fluid">

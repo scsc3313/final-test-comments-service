@@ -1,8 +1,10 @@
 package kr.ac.jejunu.kakao.spring;
 
 import kr.ac.jejunu.kakao.model.Comment;
+import kr.ac.jejunu.kakao.model.Eval;
 import kr.ac.jejunu.kakao.model.User;
 import kr.ac.jejunu.kakao.repository.CommentRepository;
+import kr.ac.jejunu.kakao.repository.EvalRepository;
 import kr.ac.jejunu.kakao.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -23,17 +27,18 @@ import java.util.Date;
  */
 @Controller
 @SessionAttributes("userModel")
-public class ViewController {
+public class AppController {
 
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private CommentRepository commentRepository;
+    @Autowired
+    private EvalRepository evalRepository;
 
     private int pageNum;
 
-    private final static Logger logger = LoggerFactory.getLogger(ViewController.class);
+    private final static Logger logger = LoggerFactory.getLogger(AppController.class);
 
     @RequestMapping("/")
     public String index(Model model, @ModelAttribute(value = "comments") Page<Comment> comments) {
@@ -49,6 +54,7 @@ public class ViewController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String login(User inputUser, HttpSession session) {
         User realUser = userRepository.findOne(inputUser.getUserId());
+
         String url;
         if (realUser != null && realUser.getPassword().equals(inputUser.getPassword())) {
             setSession(realUser, session);
@@ -61,15 +67,23 @@ public class ViewController {
 
     @RequestMapping("/signup")
     public String signup(Model model) {
+        File rootFolder = new File("/");
+
         model.addAttribute("user", new User());
         return "input-form";
     }
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public String signup(User user, HttpSession httpSession, Model model) {
+    public String signup(User user, HttpSession httpSession, Model model) throws IOException {
+//        FileOutputStream fileOutputStream = new FileOutputStream(new File("src/main/webapp/WEB-INF/views/spring/resources/images/" + file.getOriginalFilename()));
+//        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+//        bufferedOutputStream.write(file.getBytes());
+//        bufferedOutputStream.close();
+//        model.addAttribute("url", "/resources/" + file.getOriginalFilename());
+
         if (httpSession.getAttribute("id") != null) { //update 상황
             User getUser = userRepository.findOne(user.getUserId()); // 비밀번호가 일치하는지 확인
-            if (!getUser.getPassword().equals(user.getPassword())){ //비밀번호가 같지 않으면 input-form 리턴
+            if (!getUser.getPassword().equals(user.getPassword())) { //비밀번호가 같지 않으면 input-form 리턴
                 model.addAttribute("error", "패스워드가 일치하지 않습니다.");
                 return "input-form";
             }
@@ -127,23 +141,52 @@ public class ViewController {
     }
 
     @RequestMapping("/like/{id}")
-    public String addLike(@PathVariable(value = "id") Integer id) {
+    public String addLike(@PathVariable(value = "id") Integer id, HttpSession session, Model model) {
+        if (checkDuplicate(id, session, model)) return "index";
+
         Comment comment = commentRepository.findOne(id);
         Integer count = comment.getLikeCount();
         count++;
         comment.setLikeCount(count);
         commentRepository.save(comment);
-        return "index";
+
+        addEval(session, comment, true);
+        return "redirect:/";
     }
 
     @RequestMapping("/dislike/{id}")
-    public String addDislike(@PathVariable(value = "id") Integer id) {
+    public String addDislike(@PathVariable(value = "id") Integer id, HttpSession session, Model model) {
+        if (checkDuplicate(id, session, model)) return "index";
+
         Comment comment = commentRepository.findOne(id);
         Integer count = comment.getDislikeCount();
         count++;
         comment.setDislikeCount(count);
         commentRepository.save(comment);
+
+        addEval(session, comment, false);
         return "redirect:/";
+    }
+
+    private boolean checkDuplicate(@PathVariable(value = "id") Integer id, HttpSession session, Model model) {
+        Iterable<Eval> evals = evalRepository.findAll();
+        for (Eval eval : evals) {
+            if (eval.getUser().getUserId().equals(session.getAttribute("id"))) {
+                if (eval.getComment().getId().equals(id)) {
+                    model.addAttribute("duplicate", "중복");
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void addEval(HttpSession session, Comment comment, boolean reco) {
+        Eval eval = new Eval();
+        eval.setUser(userRepository.findOne((String) session.getAttribute("id")));
+        eval.setComment(comment);
+        eval.setRecommend(reco);
+        evalRepository.save(eval);
     }
 
 

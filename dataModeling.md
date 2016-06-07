@@ -18,3 +18,10 @@
 - comment_like
 - comment_dislike
 - user_id
+
+#### eval table
+
+- id (PK)
+- comment_id (FK)
+- user_id (FK)
+- like (bool)
