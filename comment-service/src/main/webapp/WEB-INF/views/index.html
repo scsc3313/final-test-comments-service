@@ -15,7 +15,7 @@
             <div id="navbar">
                 <ul th:if="${session.id}" class="nav navbar-nav">
                     <li><span th:text="${session.name}"/>(<span th:text="${session.des}"/>)</li>
-                    <li><a th:href="@{/write}">글쓰기</a></li>
+                    <li><a th:href="@{/write}" target="_blank">글쓰기</a></li>
                     <li><a th:href="${'/update/' + session.id}">프로필수정</a></li>
                     <li><a th:href="@{/logout}">로그아웃</a></li>
                 </ul>
