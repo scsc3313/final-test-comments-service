@@ -18,8 +18,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.io.File;
+import javax.validation.Valid;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -42,8 +44,29 @@ public class AppController {
 
     @RequestMapping("/")
     public String index(Model model, @ModelAttribute(value = "comments") Page<Comment> comments) {
+        formatDate(comments);
         model.addAttribute("comments", comments);
         return "index";
+    }
+
+    private void formatDate(@ModelAttribute(value = "comments") Page<Comment> comments) {
+        String resultDate;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd");
+        for (Comment comment : comments) {
+            Long compare = (System.currentTimeMillis() - Long.valueOf(comment.getDate())) / 1000;
+            if (compare <= 60)
+                resultDate = "방금전";
+            else if (compare <= 3600)
+                resultDate = compare / 60 + "분전";
+            else if (compare <= 86400)
+                resultDate = compare / 3600 + "시간전";
+            else {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(Long.parseLong(comment.getDate()));
+                resultDate = format.format(calendar.getTime());
+            }
+            comment.setDate(resultDate);
+        }
     }
 
     @RequestMapping("/login")
@@ -67,28 +90,33 @@ public class AppController {
 
     @RequestMapping("/signup")
     public String signup(Model model) {
-        File rootFolder = new File("/");
-
         model.addAttribute("user", new User());
         return "input-form";
     }
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public String signup(User user, HttpSession httpSession, Model model) throws IOException {
+    public String signup(@Valid User user, HttpSession httpSession, Model model) throws IOException {
 //        FileOutputStream fileOutputStream = new FileOutputStream(new File("src/main/webapp/WEB-INF/views/spring/resources/images/" + file.getOriginalFilename()));
 //        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
 //        bufferedOutputStream.write(file.getBytes());
 //        bufferedOutputStream.close();
 //        model.addAttribute("url", "/resources/" + file.getOriginalFilename());
-
-        if (httpSession.getAttribute("id") != null) { //update 상황
-            User getUser = userRepository.findOne(user.getUserId()); // 비밀번호가 일치하는지 확인
-            if (!getUser.getPassword().equals(user.getPassword())) { //비밀번호가 같지 않으면 input-form 리턴
-                model.addAttribute("error", "패스워드가 일치하지 않습니다.");
+        if (user.getUserId() == null || user.getPassword() == null || user.getName() == null) {
+            model.addAttribute("fail", "아이디, 패스워드, 이름은 필수항목입니다.");
+            return "input-form";
+        }
+        Iterable<User> users = userRepository.findAll();
+        for (User getUser : users) {
+            if (getUser.getUserId().equals(user.getUserId())) {
+                model.addAttribute("fail", "아이디가 중복됩니다.");
+                return "input-form";
+            }
+            if (getUser.getName().equals(user.getName())) {
+                model.addAttribute("fail", "이름이 중복됩니다.");
                 return "input-form";
             }
         }
-        userRepository.save(user); //일반 signup상황
+        userRepository.save(user);
         setSession(user, httpSession);
         return "redirect:/";
     }
@@ -99,25 +127,26 @@ public class AppController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public String write(@RequestParam(value = "content") String content, HttpSession session) {
+    public String write(@RequestParam(value = "content") String content, HttpSession session, Model model) {
         User user = userRepository.findOne(String.valueOf(session.getAttribute("id")));
         Comment comment = new Comment();
         comment.setUser(user);
         comment.setContent(content);
-        comment.setDate(new Date());
+        comment.setDate(String.valueOf(new Date().getTime()));
         commentRepository.save(comment);
-        return "redirect:/";
-    }
-
-    @ModelAttribute("userModel")
-    public User model() {
-        return new User();
+        model.addAttribute("writeDone", "");
+        return "index";
     }
 
     @RequestMapping("/logout")
     public String logout(HttpSession httpSession) {
         httpSession.invalidate();
         return "redirect:/";
+    }
+
+    @ModelAttribute("userModel")
+    public User model() {
+        return new User();
     }
 
     @ModelAttribute("comments")
@@ -130,6 +159,11 @@ public class AppController {
 
     @RequestMapping("/delete/{id}")
     public String delete(@PathVariable(value = "id") Integer id) {
+        Iterable<Eval> evals = evalRepository.findAll();
+        for (Eval eval : evals) {
+            if (eval.getComment().getId().equals(id))
+                evalRepository.delete(eval.getEvalId());
+        }
         commentRepository.delete(id);
         return "redirect:/";
     }
@@ -138,6 +172,19 @@ public class AppController {
     public String update(@PathVariable(value = "userId") String id, Model model) {
         model.addAttribute("user", userRepository.findOne(id));
         return "input-form";
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String update(@Valid User user, HttpSession httpSession, Model model) throws IOException {
+        if (httpSession.getAttribute("id") != null) { //update 상황
+            User getUser = userRepository.findOne(user.getUserId()); // 비밀번호가 일치하는지 확인
+            if (!getUser.getPassword().equals(user.getPassword())) { //비밀번호가 같지 않으면 input-form 리턴
+                model.addAttribute("error", "패스워드가 일치하지 않습니다.");
+                return "input-form";
+            }
+        }
+        setSession(user, httpSession);
+        return "redirect:/";
     }
 
     @RequestMapping("/like/{id}")
@@ -173,7 +220,7 @@ public class AppController {
         for (Eval eval : evals) {
             if (eval.getUser().getUserId().equals(session.getAttribute("id"))) {
                 if (eval.getComment().getId().equals(id)) {
-                    model.addAttribute("duplicate", "중복");
+                    model.addAttribute("duplicate", "이미 평가하셨습니다.");
                     return true;
                 }
             }

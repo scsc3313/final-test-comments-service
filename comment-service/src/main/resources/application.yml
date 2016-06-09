@@ -12,4 +12,4 @@ spring:
     static-locations: /WEB-INF/views/spring/resources
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate

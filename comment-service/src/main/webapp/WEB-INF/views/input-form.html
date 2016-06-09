@@ -9,17 +9,18 @@
     <title>Sign Up</title>
 </head>
 <body>
+
 <div class="container">
     <div class="row main">
         <div class="panel-heading">
             <div class="panel-title text-center">
-                <h1 th:if="${session.id}" class="title">Update</h1>
-                <h1 th:unless="${session.id}" class="title">Sign Up</h1>
+                <h1 th:text="${session.id}? 'Update' : 'Sign Up'" class="title">Update</h1>
                 <div th:if="${error}" th:text="${error}"></div>
             </div>
         </div>
         <div class="main-login main-center">
-            <form class="form-horizontal" method="post" th:action="@{/signup}" th:object="${user}">
+            <form class="form-horizontal" method="post" th:action="${session.id}? @{/update}:@{/signup}"
+                  th:object="${user}">
                 <div class="form-group">
                     <div class="cols-sm-10">
                         <div class="input-group">
@@ -34,7 +35,8 @@
                 <div class="form-group">
                     <div class="cols-sm-10">
                         <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                                <span class="input-group-addon"><i class="fa fa-lock fa-lg"
+                                                                   aria-hidden="true"></i></span>
                             <input type="password" class="form-control" th:name="password"
                                    placeholder="Enter your Password"/>
                         </div>
@@ -66,16 +68,15 @@
                 <div class="form-group">
                     <div class="cols-sm-10">
                         <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-image fa-lg" aria-hidden="true"></i></span>
+                                <span class="input-group-addon"><i class="fa fa-image fa-lg"
+                                                                   aria-hidden="true"></i></span>
                             <input type="file" class="form-control" th:field="*{userProfileImage}"/>
                         </div>
                     </div>
                 </div>
-
                 <div class="form-group ">
                     <button type="submit" class="btn btn-primary btn-lg btn-block login-button">
-                        <span th:if="${session.id}">수정</span>
-                        <span th:unless="${session.id}">등록</span>
+                        <span th:text="${session.id}? '수정': '등록'">버튼이름</span>
                     </button>
                 </div>
                 <div class="login-register">
@@ -85,5 +86,12 @@
         </div>
     </div>
 </div>
+<script th:inline="javascript">
+    var fail = [[${fail}]];
+    if (fail != null) {
+        alert(fail);
+        location.href = 'http://localhost:8080/signup';
+    }
+</script>
 </body>
 </html>

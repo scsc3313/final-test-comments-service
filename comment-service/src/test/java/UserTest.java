@@ -67,6 +67,4 @@ public class UserTest {
         User deletedUser = userRepository.findOne(setupUserId);
         assertThat(deletedUser, is(nullValue()));
     }
-
-
 }

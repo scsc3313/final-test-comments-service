@@ -21,10 +21,9 @@ public class Comment {
     private String content;
     private Integer likeCount;
     private Integer dislikeCount;
-    @CreatedDate
-    private Date date;
+    private String date;
 
-    public Comment(){
+    public Comment() {
         likeCount = 0;
         dislikeCount = 0;
     }
@@ -69,12 +68,11 @@ public class Comment {
         this.content = content;
     }
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 }
