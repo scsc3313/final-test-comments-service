@@ -20,7 +20,7 @@
         </div>
         <div class="main-login main-center">
             <form class="form-horizontal" method="post" th:action="${session.id}? @{/update}:@{/signup}"
-                  th:object="${user}">
+                  th:object="${user}" enctype="multipart/form-data">
                 <div class="form-group">
                     <div class="cols-sm-10">
                         <div class="input-group">
@@ -70,7 +70,10 @@
                         <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-image fa-lg"
                                                                    aria-hidden="true"></i></span>
-                            <input type="file" class="form-control" th:field="*{userProfileImage}"/>
+                            <input type="file" class="form-control" th:field="*{userProfileImage}" style="width:50%"/>
+                            <span style="margin: 0 10px 0 15px">현재 이미지 : </span>
+                            <img th:if="${session.id}" th:src="'/resources/images/'+*{userProfileImage}" width="35"
+                                 height="35" />
                         </div>
                     </div>
                 </div>

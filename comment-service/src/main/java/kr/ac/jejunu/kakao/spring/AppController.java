@@ -16,13 +16,17 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by HSH on 16. 5. 31..
@@ -43,9 +47,7 @@ public class AppController {
     private final static Logger logger = LoggerFactory.getLogger(AppController.class);
 
     @RequestMapping("/")
-    public String index(Model model, @ModelAttribute(value = "comments") Page<Comment> comments) {
-        formatDate(comments);
-        model.addAttribute("comments", comments);
+    public String index() {
         return "index";
     }
 
@@ -95,30 +97,78 @@ public class AppController {
     }
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public String signup(@Valid User user, HttpSession httpSession, Model model) throws IOException {
-//        FileOutputStream fileOutputStream = new FileOutputStream(new File("src/main/webapp/WEB-INF/views/spring/resources/images/" + file.getOriginalFilename()));
-//        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
-//        bufferedOutputStream.write(file.getBytes());
-//        bufferedOutputStream.close();
-//        model.addAttribute("url", "/resources/" + file.getOriginalFilename());
-        if (user.getUserId() == null || user.getPassword() == null || user.getName() == null) {
-            model.addAttribute("fail", "아이디, 패스워드, 이름은 필수항목입니다.");
-            return "input-form";
+    public String signup(@RequestParam Map mapUser, HttpSession httpSession, @RequestParam(value = "userProfileImage") MultipartFile file, Model model) throws IOException {
+
+        User user = mappingUser(mapUser);
+
+        uploadImage(file, model, user);
+
+        if (user.getUserId() == "" || user.getPassword() == "" || user.getName() == "") {
+            model.addAttribute("signup", "아이디, 패스워드, 이름은 필수항목입니다.");
+            return "errors";
         }
         Iterable<User> users = userRepository.findAll();
         for (User getUser : users) {
             if (getUser.getUserId().equals(user.getUserId())) {
-                model.addAttribute("fail", "아이디가 중복됩니다.");
-                return "input-form";
+                model.addAttribute("signup", "아이디가 중복됩니다.");
+                return "errors";
             }
             if (getUser.getName().equals(user.getName())) {
-                model.addAttribute("fail", "이름이 중복됩니다.");
-                return "input-form";
+                model.addAttribute("signup", "이름이 중복됩니다.");
+                return "error";
             }
         }
         userRepository.save(user);
         setSession(user, httpSession);
         return "redirect:/";
+    }
+
+    @RequestMapping("/update/{userId}")
+    public String update(@PathVariable(value = "userId") String id, Model model) {
+        model.addAttribute("user", userRepository.findOne(id));
+        return "input-form";
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String update(@RequestParam Map mapUser, HttpSession httpSession, @RequestParam(value = "userProfileImage") MultipartFile file, Model model) throws IOException {
+
+        User user = mappingUser(mapUser);
+
+        if (httpSession.getAttribute("id") != null) { //update 상황
+            User getUser = userRepository.findOne(user.getUserId()); // 비밀번호가 일치하는지 확인
+            if (!getUser.getPassword().equals(user.getPassword())) { //비밀번호가 같지 않으면 input-form 리턴
+                model.addAttribute("update", "패스워드가 일치하지 않습니다.");
+                return "errors";
+            }
+        }
+        if(!uploadImage(file, model, user)){
+            user.setUserProfileImage(userRepository.findOne(user.getUserId()).getUserProfileImage());
+        }
+        setSession(user, httpSession);
+        userRepository.save(user);
+        return "redirect:/";
+    }
+
+    private User mappingUser(Map mapUser) {
+        User user = new User();
+        user.setUserId((String) mapUser.get("userId"));
+        user.setName((String) mapUser.get("name"));
+        user.setPassword((String) mapUser.get("password"));
+        user.setDescription((String) mapUser.get("description"));
+        return user;
+    }
+
+    private boolean uploadImage(MultipartFile file, Model model, User user) throws IOException {
+        if (!file.getOriginalFilename().equals("")) {
+            user.setUserProfileImage(file.getOriginalFilename());
+            FileOutputStream fileOutputStream = new FileOutputStream(new File("src/main/webapp/WEB-INF/views/spring/resources/images/" + file.getOriginalFilename()));
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+            bufferedOutputStream.write(file.getBytes());
+            bufferedOutputStream.close();
+            model.addAttribute("url", "/resources/" + file.getOriginalFilename());
+            return true;
+        }
+        return false;
     }
 
     @RequestMapping("/write")
@@ -165,25 +215,6 @@ public class AppController {
                 evalRepository.delete(eval.getEvalId());
         }
         commentRepository.delete(id);
-        return "redirect:/";
-    }
-
-    @RequestMapping("/update/{userId}")
-    public String update(@PathVariable(value = "userId") String id, Model model) {
-        model.addAttribute("user", userRepository.findOne(id));
-        return "input-form";
-    }
-
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String update(@Valid User user, HttpSession httpSession, Model model) throws IOException {
-        if (httpSession.getAttribute("id") != null) { //update 상황
-            User getUser = userRepository.findOne(user.getUserId()); // 비밀번호가 일치하는지 확인
-            if (!getUser.getPassword().equals(user.getPassword())) { //비밀번호가 같지 않으면 input-form 리턴
-                model.addAttribute("error", "패스워드가 일치하지 않습니다.");
-                return "input-form";
-            }
-        }
-        setSession(user, httpSession);
         return "redirect:/";
     }
 
@@ -236,12 +267,9 @@ public class AppController {
         evalRepository.save(eval);
     }
 
-
     private void setSession(User user, HttpSession httpSession) {
         httpSession.setAttribute("id", user.getUserId());
         httpSession.setAttribute("name", user.getName());
         httpSession.setAttribute("des", user.getDescription());
     }
-
-
 }
