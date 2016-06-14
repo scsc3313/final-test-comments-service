@@ -1,9 +1,18 @@
 /**
  * Created by HSH on 16. 6. 5..
  */
+
+var url = 'http://localhost:8080/comments?page=';
 var req = new XMLHttpRequest();
 var sessionId = document.getElementsByClassName('session')[0].getAttribute('value');
-req.open('GET', 'http://localhost:8080/comments', true);
+var pageNumber = 0;
+function linkPage(number) {
+    history.pushState(number, "pageNum");
+    pageNumber = number;
+}
+if (history.state != null) pageNumber = history.state;
+
+req.open('GET', url + pageNumber, true);
 req.onreadystatechange = function () {
     if (req.readyState == 4) {
         if (req.status == 200) {
@@ -42,12 +51,12 @@ req.onreadystatechange = function () {
                 contentTd.innerHTML = data.content[i].content;
 
                 likeCountBtn.setAttribute('type', 'button');
-                likeCountA.setAttribute('href', '/like/'+contentId);
+                likeCountA.setAttribute('href', '/like/' + contentId);
                 likeCountA.innerHTML = '추천(' + data.content[i].likeCount + ')';
                 likeCountBtn.appendChild(likeCountA);
 
                 dislikeCountBtn.setAttribute('type', 'button');
-                dislikeCountA.setAttribute('href', '/dislike/'+contentId);
+                dislikeCountA.setAttribute('href', '/dislike/' + contentId);
                 dislikeCountA.innerHTML = '반대(' + data.content[i].dislikeCount + ')';
                 dislikeCountBtn.appendChild(dislikeCountA);
 
@@ -84,17 +93,51 @@ req.onreadystatechange = function () {
                 }
 
             }
+
+            var pagination = document.getElementsByClassName('pagination');
+            var index = Math.floor(pageNumber / 5) * 5;
+
+            var beforeList = document.createElement('li');
+            var beforeA = document.createElement('a');
+            beforeA.setAttribute("href", "/");
+            beforeA.innerHTML = "<";
+            beforeList.setAttribute("onclick", 'linkPage(' + (Math.floor((pageNumber - 5) / 5) * 5) + ')');
+            beforeList.appendChild(beforeA);
+            if (pageNumber > 4) {
+                pagination[0].appendChild(beforeList);
+            }
+
             console.log(data);
-            console.log(data.content[0].id);
-            console.log(data.content[0].content);
-            console.log(data.content[0].date);
-            console.log(data.content[0].likeCount);
-            console.log(data.content[0].dislikeCount);
-            console.log(data.content[0].user.name);
-            contents.innerHTML = "/<tr>"
+            for (var i = index; i < index + 5; i++) {
+                if (i >= data.totalPages)
+                    break;
+                var list = document.createElement('li');
+                var pageA = document.createElement('a');
+                pageA.setAttribute("href", "/");
+                pageA.innerHTML = i + 1;
+                if (i == pageNumber)
+                    list.setAttribute('class', 'active')
+                list.setAttribute("onclick", 'linkPage(' + i + ')');
+                list.appendChild(pageA);
+                pagination[0].appendChild(list);
+            }
+
+            var nextList = document.createElement('li');
+            var nextA = document.createElement('a');
+            nextA.setAttribute("href", "/");
+            nextA.innerHTML = ">";
+            nextList.setAttribute("onclick", 'linkPage(' + (Math.floor((pageNumber + 5) / 5) * 5) + ')');
+            nextList.appendChild(nextA);
+            if (index + 5 < data.totalPages) {
+                pagination[0].appendChild(nextList);
+            }
+
+
         }
         else
             alert("Error loading page\n");
     }
 };
 req.send(null);
+
+

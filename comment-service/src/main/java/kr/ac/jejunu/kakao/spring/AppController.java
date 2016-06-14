@@ -100,10 +100,8 @@ public class AppController {
     public String signup(@RequestParam Map mapUser, HttpSession httpSession, @RequestParam(value = "userProfileImage") MultipartFile file, Model model) throws IOException {
 
         User user = mappingUser(mapUser);
-
         uploadImage(file, model, user);
-
-        if (user.getUserId() == "" || user.getPassword() == "" || user.getName() == "") {
+        if (user.getUserId().equals("") || user.getPassword().equals("") || user.getName().equals("")) {
             model.addAttribute("signup", "아이디, 패스워드, 이름은 필수항목입니다.");
             return "errors";
         }
@@ -115,7 +113,7 @@ public class AppController {
             }
             if (getUser.getName().equals(user.getName())) {
                 model.addAttribute("signup", "이름이 중복됩니다.");
-                return "error";
+                return "errors";
             }
         }
         userRepository.save(user);
@@ -141,7 +139,7 @@ public class AppController {
                 return "errors";
             }
         }
-        if(!uploadImage(file, model, user)){
+        if (!uploadImage(file, model, user)) {
             user.setUserProfileImage(userRepository.findOne(user.getUserId()).getUserProfileImage());
         }
         setSession(user, httpSession);

@@ -1,3 +1,10 @@
 .center{
   text-align: center;
 }
+
+.pagination{
+  position: relative;
+  left:50%;
+  margin : 0;
+  text-align: center;
+}

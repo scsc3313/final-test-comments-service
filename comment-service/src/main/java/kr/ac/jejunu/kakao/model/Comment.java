@@ -1,10 +1,6 @@
 package kr.ac.jejunu.kakao.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.data.annotation.CreatedDate;
-
 import javax.persistence.*;
-import java.util.Date;
 
 /**
  * Created by HSH on 16. 5. 28..
@@ -26,22 +22,6 @@ public class Comment {
     public Comment() {
         likeCount = 0;
         dislikeCount = 0;
-    }
-
-    public Integer getLikeCount() {
-        return likeCount;
-    }
-
-    public void setLikeCount(Integer likeCount) {
-        this.likeCount = likeCount;
-    }
-
-    public Integer getDislikeCount() {
-        return dislikeCount;
-    }
-
-    public void setDislikeCount(Integer dislikeCount) {
-        this.dislikeCount = dislikeCount;
     }
 
     public Integer getId() {
@@ -66,6 +46,22 @@ public class Comment {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Integer getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(Integer likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public Integer getDislikeCount() {
+        return dislikeCount;
+    }
+
+    public void setDislikeCount(Integer dislikeCount) {
+        this.dislikeCount = dislikeCount;
     }
 
     public String getDate() {

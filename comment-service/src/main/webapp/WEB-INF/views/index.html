@@ -45,41 +45,13 @@
             </tr>
             </thead>
             <tbody class="contents">
-            <!--<tr>-->
-            <!--<td class="userProfileImage"></td>-->
-            <!--<td class="username"></td>-->
-            <!--<td class="content"></td>-->
-            <!--<td class="eval"></td>-->
-            <!--<td class="date"></td>-->
-            <!--</tr>-->
+            <!--comment-->
             </tbody>
-            <!--<tr th:each="comment : ${comments}">-->
-            <!--<td><img src="#" alt="user_profile_image"/></td>-->
-            <!--<td>username</td>-->
-            <!--<td>content</td>-->
-            <!--<td class="center">-->
-            <!--<button type="button" name="button">-->
-            <!--<a href="">-->
-            <!--추천(<span>count</span>)-->
-            <!--</a>-->
-            <!--</button>-->
-            <!--</td>-->
-            <!--<td class="center">-->
-            <!--<button type="button" name="button">-->
-            <!--<a href="">-->
-            <!--반대(<span>count</span>)-->
-            <!--</a>-->
-            <!--</button>-->
-            <!--</td>-->
-            <!--<td>-->
-            <!--<button th:if="${session.id == comment.user.userId}" class="center" type="button" name="button">-->
-            <!--<a th:href="${'/delete/'+comment.id}">삭제</a>-->
-            <!--</button>-->
-            <!--</td>-->
-            <!--<td>date</td>-->
-            <!--</tr>-->
         </table>
     </div>
+    <ul class="pagination">
+        <!--<li><a href="#">1</a></li>-->
+    </ul>
 </div>
 <script th:inline="javascript">
     var message = [[${duplicate}]];
