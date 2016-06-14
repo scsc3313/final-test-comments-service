@@ -7,6 +7,12 @@
 <body>
 
 <script th:inline="javascript">
+    var login = [[${login}]];
+    if (login != null) {
+        alert(login);
+        location.href = 'http://localhost:8080/login';
+    }
+
     var signup = [[${signup}]];
     if (signup != null) {
         alert(signup);
@@ -16,7 +22,7 @@
     var update = [[${update}]];
     if (update != null){
         alert(update);
-        location.hash = 'http://localhost:8080/update';
+        window.history.back();
     }
 </script>
 

@@ -9,10 +9,6 @@ import kr.ac.jejunu.kakao.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +19,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
@@ -51,39 +45,19 @@ public class AppController {
         return "index";
     }
 
-    private void formatDate(@ModelAttribute(value = "comments") Page<Comment> comments) {
-        String resultDate;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd");
-        for (Comment comment : comments) {
-            Long compare = (System.currentTimeMillis() - Long.valueOf(comment.getDate())) / 1000;
-            if (compare <= 60)
-                resultDate = "방금전";
-            else if (compare <= 3600)
-                resultDate = compare / 60 + "분전";
-            else if (compare <= 86400)
-                resultDate = compare / 3600 + "시간전";
-            else {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(Long.parseLong(comment.getDate()));
-                resultDate = format.format(calendar.getTime());
-            }
-            comment.setDate(resultDate);
-        }
-    }
-
     @RequestMapping("/login")
     public String login() {
         return "login";
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String login(User inputUser, HttpSession session) {
+    public String login(User inputUser, HttpSession session, Model model) {
         User realUser = userRepository.findOne(inputUser.getUserId());
-
         String url;
         if (realUser != null && realUser.getPassword().equals(inputUser.getPassword())) {
             setSession(realUser, session);
-            url = "redirect:/";
+            model.addAttribute("login", "아이디나 패스워드가 일치하지 않습니다.");
+            url = "errors";
         } else {
             url = "login";
         }
@@ -129,7 +103,6 @@ public class AppController {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@RequestParam Map mapUser, HttpSession httpSession, @RequestParam(value = "userProfileImage") MultipartFile file, Model model) throws IOException {
-
         User user = mappingUser(mapUser);
 
         if (httpSession.getAttribute("id") != null) { //update 상황
@@ -138,8 +111,13 @@ public class AppController {
                 model.addAttribute("update", "패스워드가 일치하지 않습니다.");
                 return "errors";
             }
+
+            if (getUser.getName().equals(user.getName()) && !getUser.getUserId().equals(user.getUserId())) { //이름이 중복되는지 검사
+                model.addAttribute("update", "이름이 중복됩니다.");
+                return "errors";
+            }
         }
-        if (!uploadImage(file, model, user)) {
+        if (!uploadImage(file, model, user)) { //upload를 하지않았다면 현재 프로필 유지
             user.setUserProfileImage(userRepository.findOne(user.getUserId()).getUserProfileImage());
         }
         setSession(user, httpSession);
@@ -195,14 +173,6 @@ public class AppController {
     @ModelAttribute("userModel")
     public User model() {
         return new User();
-    }
-
-    @ModelAttribute("comments")
-    public Page<Comment> comments(@PageableDefault(size = 7, direction = Sort.Direction.DESC, sort = "id") Pageable pageable) {
-        if (pageNum < 1 || pageNum > 1000) pageNum = 0;
-        Page<Comment> commentList = commentRepository.findAll(pageable);
-        if (pageNum > commentList.getTotalPages()) pageNum = 0;
-        return commentList;
     }
 
     @RequestMapping("/delete/{id}")

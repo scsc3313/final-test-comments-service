@@ -8,3 +8,11 @@
   margin : 0;
   text-align: center;
 }
+
+.eval {
+  text-align: center;
+}
+
+.eval button{
+  margin : 0 5px;
+}

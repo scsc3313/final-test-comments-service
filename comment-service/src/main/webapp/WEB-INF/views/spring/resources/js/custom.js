@@ -60,6 +60,7 @@ req.onreadystatechange = function () {
                 dislikeCountA.innerHTML = '반대(' + data.content[i].dislikeCount + ')';
                 dislikeCountBtn.appendChild(dislikeCountA);
 
+                evalTd.setAttribute('class', 'eval');
                 evalTd.appendChild(likeCountBtn);
                 evalTd.appendChild(dislikeCountBtn);
 

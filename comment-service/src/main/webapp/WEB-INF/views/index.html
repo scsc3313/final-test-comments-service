@@ -12,7 +12,6 @@
         <div class="container-fluid">
             <div id="navbar">
                 <ul th:if="${session.id}" class="nav navbar-nav">
-                    <!--<li><span th:text="${session.name}"/>(<span th:text="${session.des}"/>)</li>-->
                     <li th:inline="text"><a th:href="@{/}">[[${session.name}]]([[${session.des}]])</a></li>
                     <li>
                         <a th:href="@{/write}"
@@ -24,8 +23,8 @@
                     <li><a th:href="@{/logout}">로그아웃</a></li>
                 </ul>
                 <ul th:unless="${session.id}" class="nav navbar-nav">
-                    <li><a th:href="@{/write}">글쓰기</a></li>
                     <li><a th:href="@{/signup}">회원가입</a></li>
+                    <li><a th:href="@{/write}">글쓰기</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->

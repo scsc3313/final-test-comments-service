@@ -12,17 +12,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @SpringBootApplication
 public class Application extends WebMvcConfigurerAdapter {
 
-//    @Override
-//    public void configureViewResolvers(ViewResolverRegistry registry) {
-//        registry.enableContentNegotiation(new MappingJackson2JsonView());
-//    }
-
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new SessionHandlerInterceptorAdapter()).addPathPatterns("/write", "/like/*", "/dislike/*").excludePathPatterns("/login", "/signup", "/");
+        registry.addInterceptor(new SessionHandlerInterceptorAdapter()).
+                addPathPatterns("/write", "/like/*", "/dislike/*").
+                excludePathPatterns("/login", "/signup", "/");
     }
 }
