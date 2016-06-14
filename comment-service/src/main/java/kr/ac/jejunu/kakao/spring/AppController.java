@@ -56,10 +56,10 @@ public class AppController {
         String url;
         if (realUser != null && realUser.getPassword().equals(inputUser.getPassword())) {
             setSession(realUser, session);
+            url = "redirect:/";
+        } else {
             model.addAttribute("login", "아이디나 패스워드가 일치하지 않습니다.");
             url = "errors";
-        } else {
-            url = "login";
         }
         return url;
     }
